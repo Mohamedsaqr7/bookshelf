@@ -1,43 +1,35 @@
-class CategoryModel {
-  Categorydata? categorydata;
+class CategoriesModel {
+  Data? data;
   String? message;
-  List<dynamic>? error;
   int? status;
 
-  CategoryModel({this.categorydata, this.message, this.error, this.status});
+  CategoriesModel({this.data, this.message, this.status});
 
-  CategoryModel.fromJson(Map<String, dynamic> json) {
-    categorydata = json['categorydata'] != null
-        ? Categorydata.fromJson(json['categorydata'])
-        : null;
+  CategoriesModel.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
-    error=
-    json['error'] as List<dynamic>?;
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (categorydata != null) {
-      data['categorydata'] = categorydata!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
     }
     data['message'] = message;
-    if (error != null) {
-      data['error'] = error!.map((v) => v.toJson()).toList();
-    }
     data['status'] = status;
     return data;
   }
 }
 
-class Categorydata {
+class Data {
   List<Categories>? categories;
   Meta? meta;
   Links? links;
 
-  Categorydata({this.categories, this.meta, this.links});
+  Data({this.categories, this.meta, this.links});
 
-  Categorydata.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     if (json['categories'] != null) {
       categories = <Categories>[];
       json['categories'].forEach((v) {
@@ -49,7 +41,7 @@ class Categorydata {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (categories != null) {
       data['categories'] = categories!.map((v) => v.toJson()).toList();
     }
@@ -77,7 +69,7 @@ class Categories {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['products_count'] = productsCount;
@@ -101,7 +93,7 @@ class Meta {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['total'] = total;
     data['per_page'] = perPage;
     data['current_page'] = currentPage;
@@ -113,24 +105,20 @@ class Meta {
 class Links {
   String? first;
   String? last;
-  dynamic? prev;
-  dynamic? next;
 
-  Links({this.first, this.last, this.prev, this.next});
+
+  Links({this.first, this.last});
 
   Links.fromJson(Map<String, dynamic> json) {
     first = json['first'];
     last = json['last'];
-    prev = json['prev'];
-    next = json['next'];
+
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['first'] = first;
     data['last'] = last;
-    data['prev'] = prev;
-    data['next'] = next;
     return data;
   }
 }

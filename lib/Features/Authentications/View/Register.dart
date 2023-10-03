@@ -2,6 +2,7 @@ import 'package:bookshelf/Core/Services/Navigation.dart';
 import 'package:bookshelf/Core/Widgets.dart';
 import 'package:bookshelf/Core/colors.dart';
 import 'package:bookshelf/Core/textWidgets.dart';
+import 'package:bookshelf/Features/Authentications/View/login.dart';
 import 'package:bookshelf/Features/Authentications/ViewModel/authcubit.dart';
 import 'package:bookshelf/x.dart';
 import 'package:flutter/material.dart';
@@ -58,8 +59,14 @@ class Register extends StatelessWidget {
                               text: 'already have an account?',
                               colorr: Colors.grey),
                           sbox(w: 15),
-                          authtext(
-                              text: 'Login', colorr: CustomColors.primarycolor)
+                          InkWell(
+                            onTap: () {
+                              Navigation.gopush(context, Login());
+                            },
+                            child: authtext(
+                                text: 'Login',
+                                colorr: CustomColors.primarycolor),
+                          )
                         ],
                       ),
                       sbox(h: 15),
@@ -83,7 +90,7 @@ class Register extends StatelessWidget {
                                 type: TextInputType.name,
                                 validate: (value) {
                                   if (value!.trim().isEmpty)
-                                    return 'The Field Can\'t Be Empty';
+                                    return 'Enter Your Name';
                                   return null;
                                 },
                               ),
@@ -95,7 +102,7 @@ class Register extends StatelessWidget {
                                 type: TextInputType.name,
                                 validate: (value) {
                                   if (value!.trim()!.isEmpty)
-                                    return 'The Field Can\'t Be Empty';
+                                    return 'nter Your email';
                                   return null;
                                 },
                               ),
@@ -107,7 +114,7 @@ class Register extends StatelessWidget {
                                 type: TextInputType.name,
                                 validate: (value) {
                                   if (value!.trim()!.isEmpty)
-                                    return 'The Field Can\'t Be Empty';
+                                    return 'nter Your password';
                                   return null;
                                 },
                               ),
@@ -132,7 +139,9 @@ class Register extends StatelessWidget {
                               sbox(h: 15),
                               InkWell(
                                 onTap: () {
-                                  if (cubit.regkey.currentState!.validate()|| cubit.password.text==cubit.confirmpassword.text) {
+                                  if (cubit.regkey.currentState!.validate() ||
+                                      cubit.password.text ==
+                                          cubit.confirmpassword.text) {
                                     cubit.register();
                                   }
                                 },

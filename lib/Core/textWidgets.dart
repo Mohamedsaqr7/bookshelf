@@ -12,16 +12,13 @@ Widget authtext({
       text,
       style: TextStyle(color: colorr, fontSize: size?.sp, fontWeight: weight),
     );
-hometext1({
-  required String text,
-}) =>
-    Text(
-      maxLines: 2,
+hometext1({required String text, Color? color, int? max}) => Text(
+      maxLines: max ?? 2,
       text,
       style: TextStyle(
           overflow: TextOverflow.ellipsis,
-          color: Colors.black,
-          fontSize: 22.sp,
+          color: color ?? Colors.black,
+          fontSize: 15.sp,
           fontWeight: FontWeight.bold),
     );
 hometext2({
@@ -29,6 +26,8 @@ hometext2({
 }) =>
     Text(
       text,
+      maxLines: 11,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
           color: Colors.grey, fontSize: 15.sp, fontWeight: FontWeight.normal),
     );
@@ -38,7 +37,8 @@ oldprice({
     Text(
       text,
       style: TextStyle(
-          color: Colors.grey.withOpacity(0.6),
+          decoration: TextDecoration.lineThrough,
+          color: const Color.fromARGB(255, 231, 25, 10).withOpacity(0.6),
           fontSize: 15.sp,
           fontWeight: FontWeight.normal),
     );
@@ -50,5 +50,5 @@ newprice({
       style: TextStyle(
           color: CustomColors.green,
           fontSize: 15.sp,
-          fontWeight: FontWeight.normal),
+          fontWeight: FontWeight.bold),
     );

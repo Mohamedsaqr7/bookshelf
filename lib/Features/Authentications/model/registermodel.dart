@@ -1,22 +1,20 @@
-class RegisterModel {
-  Registerdata? registerdata;
+class AuthenticateModel {
+  Data? data;
   String? message;
   int? status;
 
-  RegisterModel({this.registerdata, this.message, this.status});
+  AuthenticateModel({this.data, this.message, this.status});
 
-  RegisterModel.fromJson(Map<String, dynamic> json) {
-    registerdata = json['Registerdata'] != null
-        ? Registerdata.fromJson(json['Registerdata'])
-        : null;
+  AuthenticateModel.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (registerdata != null) {
-      data['Registerdata'] = registerdata!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
     }
     data['message'] = message;
     data['status'] = status;
@@ -24,19 +22,19 @@ class RegisterModel {
   }
 }
 
-class Registerdata {
+class Data {
   User? user;
   String? token;
 
-  Registerdata({this.user, this.token});
+  Data({this.user, this.token});
 
-  Registerdata.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     user = json['user'] != null ? User.fromJson(json['user']) : null;
-    token = json['token']as String;
+    token = json['token'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (user != null) {
       data['user'] = user!.toJson();
     }
@@ -49,9 +47,9 @@ class User {
   int? id;
   String? name;
   String? email;
-  dynamic address;
-  dynamic city;
-  dynamic phone;
+  String? address;
+  String? city;
+  String? phone;
   bool? emailVerified;
   String? image;
 
@@ -77,7 +75,7 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['email'] = email;

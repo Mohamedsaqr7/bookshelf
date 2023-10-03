@@ -20,27 +20,35 @@ class AuthCubit extends Cubit<AuthState> {
   var confirmpassword = TextEditingController();
   var regkey = GlobalKey<FormState>();
 
-  RegisterModel? registerModel;
+  var logemail = TextEditingController();
+  var logpassword = TextEditingController();
+  var logkey = GlobalKey<FormState>();
+  AuthenticateModel? logmodel;
+
+  AuthenticateModel? registerModel;
   register() async {
     emit(UserRegisterloadingState());
-    await DioHelper.post(
-            endpoint: Endpoint.register,
-            data: {
-              'name': name.text,
-              'email': email.text,
-              'password': password.text,
-              'password_confirmation': confirmpassword.text
-            },
-            )
-        .then((value) async {
+    await DioHelper.postData(
+      url: Endpoint.register,
+      data: {
+        'name': name.text,
+        'email': email.text,
+        'password': password.text,
+        'password_confirmation': confirmpassword.text
+      },
+    ).then((value) async {
       print(value.data);
-      if (value.data['code'] == 200 || value.data['code'] == 201) {
-        registerModel = RegisterModel.fromJson(value.data);
+      registerModel = AuthenticateModel.fromJson(value.data);
+      if (registerModel!.status == 200) {
+        print(registerModel!.data!.token);
+        emit(UserRegistersuccessState());
       }
 
-         await SecureStorage().storage.write(key: 'token', value: registerModel!.registerdata!.token);
-
-      emit(UserRegistersuccessState());
+      await SecureStorage()
+          .storage
+          .write(key: 'token', value: registerModel!.data!.token);
+      print(
+          ' The token is:  ${await SecureStorage().storage.read(key: 'token')}');
     }).catchError((error) {
       print(error.toString());
       if (error is DioError && error.response?.statusCode == 404) {
@@ -52,25 +60,21 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  var logemail = TextEditingController();
-  var logpassword = TextEditingController();
-  var logkey = GlobalKey<FormState>();
-
-  RegisterModel? logmodel;
-  login() async{
+  login() async {
     emit(UserlogloadingState());
-    await DioHelper.post(endpoint: Endpoint.login, data: {
+    await DioHelper.postData(url: Endpoint.login, data: {
       'email': logemail.text,
       'password': logpassword.text,
     }).then((value) async {
       print(value.data);
-      if (value.data['code'] == 200 || value.data['code'] == 201) {
-              logmodel = RegisterModel.fromJson(value.data);
-
+      logmodel = AuthenticateModel.fromJson(value.data);
+      if (logmodel!.status == 200) {
+        print(logmodel!.data!.token);
+        emit(UserlogsuccessState());
       }
-      await SecureStorage().storage.write(key: 'token', value: registerModel!.registerdata!.token);
-
-      emit(UserlogsuccessState());
+      await SecureStorage()
+          .storage
+          .write(key: 'token', value: logmodel!.data!.token);
     }).catchError((error) {
       print(error.toString());
       if (error is DioError && error.response?.statusCode == 404) {

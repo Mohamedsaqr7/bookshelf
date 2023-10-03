@@ -1,41 +1,33 @@
 class SliderModel {
-  Sliderdata? sliderdata;
+  Data? data;
   String? message;
-  List<dynamic>? error;
   int? status;
 
-  SliderModel({this.sliderdata, this.message, this.error, this.status});
+  SliderModel({this.data, this.message, this.status});
 
   SliderModel.fromJson(Map<String, dynamic> json) {
-    sliderdata = json['sliderdata'] != null
-        ? Sliderdata.fromJson(json['sliderdata'])
-        : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
-    json['error'] as List<dynamic>?;
-
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (sliderdata != null) {
-      data['sliderdata'] = sliderdata!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
     }
     data['message'] = message;
-    if (error != null) {
-      data['error'] = error!.map((v) => v.toJson()).toList();
-    }
     data['status'] = status;
     return data;
   }
 }
 
-class Sliderdata {
+class Data {
   List<Sliders>? sliders;
 
-  Sliderdata({this.sliders});
+  Data({this.sliders});
 
-  Sliderdata.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     if (json['sliders'] != null) {
       sliders = <Sliders>[];
       json['sliders'].forEach((v) {
@@ -45,7 +37,7 @@ class Sliderdata {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (sliders != null) {
       data['sliders'] = sliders!.map((v) => v.toJson()).toList();
     }
@@ -63,7 +55,7 @@ class Sliders {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['image'] = image;
     return data;
   }

@@ -1,6 +1,6 @@
 import 'package:bookshelf/Core/Widgets.dart';
 import 'package:bookshelf/Core/textWidgets.dart';
-import 'package:bookshelf/Features/home/model/bookmodel.dart';
+import 'package:bookshelf/Features/home/model/book_model.dart';
 import 'package:bookshelf/Features/home/viewmodel/homepagecubit.dart';
 import 'package:bookshelf/Features/home/viewmodel/homepagestate.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +8,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Books extends StatelessWidget {
-  Bookproducts? produccts;
+  BooksModel? produccts;
   Books({super.key});
-
+  bool isfav = false;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomePageCubit, HomePageState>(
       listener: (context, state) {
+        if (state is addtofavosuccessstate) {
+          SnackBar snackBar = SnackBar(
+            content: Text('Added to Favourites Successfully'),
+            backgroundColor: Colors.grey,
+            duration: Duration(seconds: 1),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+        if (state is addtocartsuccessstate) {
+          SnackBar snackBar = SnackBar(
+            content: Text('Added to cart Successfully'),
+            backgroundColor: Colors.amber,
+            duration: Duration(seconds: 1),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
         // TODO: implement listener
       },
       builder: (context, state) {
@@ -23,96 +39,59 @@ class Books extends StatelessWidget {
           body: Form(
             key: cubit.searchkey,
             child: SafeArea(
-                child: Padding(
-              padding: EdgeInsets.all(15.0.w),
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: cubit.search,
-                    decoration: InputDecoration(prefixIcon: Icon(Icons.search)),
-                  ),
-                  sbox(h: 15),
-                  Container(
-                    height: 583,
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        itemBuilder: (context, index) => Container(
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: Colors.black.withOpacity(0.4))),
-                              child: Padding(
-                                padding: EdgeInsets.all(12.0.w),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 120,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black)),
-                                    ),
-                                    sbox(w: 12),
-                                    Column(
-                                      children: [
-                                        hometext1(
-                                            text: cubit
-                                                    .bookmodel
-                                                    ?.bookdata
-                                                    ?.bookproducts?[index]
-                                                    .name ??
-                                                ' code'),
-                                        sbox(h: 10),
-                                        hometext2(
-                                            text: cubit
-                                                    .bookmodel
-                                                    ?.bookdata
-                                                    ?.bookproducts?[index]
-                                                    .description ??
-                                                'software'),
-                                        sbox(h: 10),
-                                        oldprice(
-                                            text: cubit
-                                                    .bookmodel
-                                                    ?.bookdata
-                                                    ?.bookproducts?[index]
-                                                    .price ??
-                                                'text'),
-                                        sbox(h: 10),
-                                        newprice(
-                                            text: cubit
-                                                    .bookmodel
-                                                    ?.bookdata
-                                                    ?.bookproducts?[index]
-                                                    .priceAfterDiscount ??
-                                                'sa')
-                                      ],
-                                    ),
-                                    Spacer(),
-                                    Column(
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(Icons.favorite_border)),
-                                        Spacer(),
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(Icons
-                                                .add_shopping_cart_outlined))
-                                      ],
-                                    )
-                                  ],
-                                ),
+              child: Padding(
+                padding: EdgeInsets.only(left: 15.0.w, right: 15.w),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: cubit.search,
+                      onChanged: (String value) {
+                        cubit.Searchbook(value);
+                      },
+                      decoration:
+                          InputDecoration(prefixIcon: Icon(Icons.search)),
+                    ),
+                    sbox(h: 15),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (context, index) => bookcard(
+                                text1: cubit.bookmodel?.data?.products?[index]
+                                        .name ??
+                                    ' code',
+                                text3: cubit.bookmodel?.data?.products?[index]
+                                        .price ??
+                                    'text',
+                                text2: cubit
+                                    .bookmodel?.data?.products?[index].category,
+                                image: cubit.bookmodel?.data?.products?[index]
+                                        .image ??
+                                    'text',
+                                text4:
+                                    "${cubit.bookmodel?.data?.products?[index].priceAfterDiscount}",
+                                onPressed1: () {
+                                  cubit.addToFav(
+                                      id: cubit.bookmodel?.data
+                                              ?.products?[index].id ??
+                                          0);
+                                },
+                                onPressed2: () {
+                                  cubit.addtocart(
+                                      id: cubit.bookmodel?.data
+                                              ?.products?[index].id ??
+                                          0);
+                                },
+                                //icon: isfav?Icon(Icons.favorite_border):Icon(Icons.favorite,color: Colors.red,),
                               ),
-                            ),
-                        separatorBuilder: (context, index) => sbox(h: 15),
-                        itemCount: 8),
-                  )
-                ],
+                          separatorBuilder: (context, index) => sbox(h: 15),
+                          itemCount:
+                              cubit.bookmodel?.data?.products?.length ?? 2),
+                    )
+                  ],
+                ),
               ),
-            )),
+            ),
           ),
         );
       },

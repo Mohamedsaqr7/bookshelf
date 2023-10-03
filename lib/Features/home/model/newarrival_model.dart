@@ -1,25 +1,20 @@
-class BestSellerModel {
-  List<Sellerdata>? sellerdata;
+class NewArrivalModel {
+  Data? data;
   String? message;
   int? status;
 
-  BestSellerModel({this.sellerdata, this.message, this.status});
+  NewArrivalModel({this.data, this.message, this.status});
 
-  BestSellerModel.fromJson(Map<String, dynamic> json) {
-    if (json['sellerdata'] != null) {
-      sellerdata = <Sellerdata>[];
-      json['sellerdata'].forEach((v) {
-        sellerdata!.add(new Sellerdata.fromJson(v));
-      });
-    }
+  NewArrivalModel.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (sellerdata != null) {
-      data['sellerdata'] = this.sellerdata!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
     }
     data['message'] = message;
     data['status'] = status;
@@ -27,12 +22,12 @@ class BestSellerModel {
   }
 }
 
-class Sellerdata {
+class Data {
   List<Products>? products;
 
-  Sellerdata({this.products});
+  Data({this.products});
 
-  Sellerdata.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     if (json['products'] != null) {
       products = <Products>[];
       json['products'].forEach((v) {
@@ -42,7 +37,7 @@ class Sellerdata {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (products != null) {
       data['products'] = products!.map((v) => v.toJson()).toList();
     }
@@ -51,7 +46,7 @@ class Sellerdata {
 }
 
 class Products {
-  int? id;
+  dynamic? id;
   String? name;
   String? description;
   String? price;
@@ -64,15 +59,15 @@ class Products {
 
   Products(
       {this.id,
-      this.name,
-      this.description,
-      this.price,
-      this.discount,
-      this.priceAfterDiscount,
-      this.stock,
-      this.bestSeller,
-      this.image,
-      this.category});
+        this.name,
+        this.description,
+        this.price,
+        this.discount,
+        this.priceAfterDiscount,
+        this.stock,
+        this.bestSeller,
+        this.image,
+        this.category});
 
   Products.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -88,7 +83,7 @@ class Products {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['description'] = description;
