@@ -96,17 +96,29 @@ class citysuccessstate extends HomePageState {}
 
 class cityerrorstate extends HomePageState {}
 
-class SearchDoctorsloadingstate extends HomePageState {}
+class Searchloadingstate extends HomePageState {}
 
-class SearchDoctorsSucceessstate extends HomePageState {}
+class SearchSucceessstate extends HomePageState {}
 
-class SearchDoctorsErrorstate extends HomePageState {}
+class SearchErrorstate extends HomePageState {}
 
 class placeorderloadingstate extends HomePageState {}
 
 class placeorderSucceessstate extends HomePageState {}
 
 class placeorderErrorstate extends HomePageState {}
+
+class getorderloadingstate extends HomePageState {}
+
+class getorderSucceessstate extends HomePageState {}
+
+class getorderErrorstate extends HomePageState {}
+
+class getsingleorderloadingstate extends HomePageState {}
+
+class getsingleorderSucceessstate extends HomePageState {}
+
+class getsingleorderErrorstate extends HomePageState {}
 
 class updateaccountloadingstate extends HomePageState {}
 

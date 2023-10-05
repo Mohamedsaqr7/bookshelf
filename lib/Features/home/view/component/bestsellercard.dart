@@ -15,7 +15,7 @@ class Bestsellercard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 110,
-      height: 260,
+      height: 250,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -25,7 +25,7 @@ class Bestsellercard extends StatelessWidget {
               children: [
                 Image.network(
                   products?.image ?? 'h',
-                  height: 130,
+                  height: 130, fit: BoxFit.fill, width: double.infinity,
                   //width: double.infinity,
                 ),
                 Container(

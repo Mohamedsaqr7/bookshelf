@@ -18,16 +18,15 @@ class HomePage extends StatelessWidget {
       builder: (context, state) {
         var cubit = HomePageCubit.get(context);
         return Scaffold(
-          bottomNavigationBar: CurvedNavigationBar(
-            backgroundColor: Colors.transparent,
-            color: CustomColors.primarycolor,
-            items: cubit.items,
-            index: cubit.currentindex,
-            height: 50.h,
-            onTap: (currentindex) => cubit.changecurrentindex(currentindex),
-          ),
-          body: cubit.layouts[cubit.currentindex],
-        );
+            bottomNavigationBar: CurvedNavigationBar(
+              backgroundColor: Colors.transparent,
+              color: CustomColors.primarycolor,
+              items: cubit.items,
+              index: cubit.currentindex,
+              height: 50.h,
+              onTap: (currentindex) => cubit.changecurrentindex(currentindex),
+            ),
+            body: cubit.layouts[cubit.currentindex]);
       },
     );
   }

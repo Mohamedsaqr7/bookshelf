@@ -68,7 +68,7 @@ class CheckOut extends StatelessWidget {
                     sbox(h: 20),
                     customTextfield(
                       controller: cubit.checkoutuserphone,
-                      label: 'name',
+                      label: 'phone',
                       type: TextInputType.phone,
                       validate: (value) {
                         if (value!.trim().isEmpty) return 'enter phone';
@@ -119,6 +119,7 @@ class CheckOut extends StatelessWidget {
                     sbox(h: 10),
                     ListView.separated(
                         shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) => ListTile(
                               title: SizedBox(
                                   width: 5.w,
@@ -132,10 +133,10 @@ class CheckOut extends StatelessWidget {
                                           '')),
                               subtitle: hometext2(
                                   text:
-                                      "quantity: ${cubit.cartmodel?.data?.cartItems![index].itemQuantity}"),
+                                      "quantity: ${cubit.cartmodel?.data?.cartItems?[index].itemQuantity}"),
                               trailing: newprice(
                                   text:
-                                      '${cubit.cartmodel?.data?.cartItems![index].itemTotal}'),
+                                      '${cubit.cartmodel?.data?.cartItems?[index].itemTotal}'),
                             ),
                         separatorBuilder: (context, index) => sbox(h: 10),
                         itemCount:

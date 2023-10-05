@@ -13,44 +13,40 @@ class Newarrivalcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigation.gopush(context, BookDetails(id: arrivalproducts.id ?? 0));
-      },
-      child: Container(
-        width: 130,
-        height: 120,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              child: Stack(
-                children: [
-                  Image.network(
-                    '${arrivalproducts.image}',
-                    height: 130,
-                  ),
-                  Container(
-                    color: Colors.grey.withOpacity(0.7),
-                    width: 40.w,
-                    height: 20.h,
-                    child: Center(
-                        child: Text(
-                      '${arrivalproducts.discount}%',
-                    )),
-                  )
-                ],
-              ),
+    return Container(
+      width: 130,
+      height: 120,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: Stack(
+              children: [
+                Image.network(
+                  '${arrivalproducts.image}',
+                  height: 130,
+                ),
+                Container(
+                  color: Colors.grey.withOpacity(0.7),
+                  width: 40.w,
+                  height: 20.h,
+                  child: Center(
+                      child: Text(
+                    '${arrivalproducts.discount}%',
+                  )),
+                )
+              ],
             ),
-            sbox(h: 5),
-            hometext1(text: "${arrivalproducts.name}"),
-            sbox(h: 5),
-            hometext2(text: arrivalproducts.category ?? 'asdasad'),
-            sbox(h: 5),
-            oldprice(text: arrivalproducts.price ?? 'texkkt'),
-            sbox(h: 5),
-            newprice(text: "${arrivalproducts.priceAfterDiscount}")
-          ],
-        ),
+          ),
+          sbox(h: 5),
+          hometext1(text: "${arrivalproducts.name}"),
+          sbox(h: 5),
+          hometext2(text: arrivalproducts.category ?? 'asdasad'),
+          sbox(h: 5),
+          oldprice(text: arrivalproducts.price ?? 'texkkt'),
+          sbox(h: 5),
+          newprice(text: "${arrivalproducts.priceAfterDiscount}")
+        ],
       ),
     );
   }

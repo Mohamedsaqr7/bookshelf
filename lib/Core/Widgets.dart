@@ -66,8 +66,6 @@ Widget customTextfield({
       controller: controller,
     );
 
-
-
 bookcard({
   required String text1,
   String? text2,
@@ -111,9 +109,9 @@ bookcard({
                   sbox(h: 10),
                   hometext2(text: text2 ?? 'software'),
                   Spacer(),
-                  oldprice(text: "$text3" ' LE' ?? 'text' 'LE'),
+                  oldprice(text: "$text3" ?? 'text' 'LE'),
                   sbox(h: 10),
-                  newprice(text: "$text4" ' LE' ?? 'sa')
+                  newprice(text: "$text4" ?? 'sa')
                 ],
               ),
               Spacer(),

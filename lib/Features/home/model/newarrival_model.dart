@@ -46,12 +46,12 @@ class Data {
 }
 
 class Products {
-  dynamic? id;
+  int? id;
   String? name;
   String? description;
   String? price;
   int? discount;
-  double? priceAfterDiscount;
+  dynamic priceAfterDiscount;
   int? stock;
   int? bestSeller;
   String? image;
@@ -59,15 +59,15 @@ class Products {
 
   Products(
       {this.id,
-        this.name,
-        this.description,
-        this.price,
-        this.discount,
-        this.priceAfterDiscount,
-        this.stock,
-        this.bestSeller,
-        this.image,
-        this.category});
+      this.name,
+      this.description,
+      this.price,
+      this.discount,
+      this.priceAfterDiscount,
+      this.stock,
+      this.bestSeller,
+      this.image,
+      this.category});
 
   Products.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -5,8 +5,11 @@ import 'package:bookshelf/Features/home/model/bestseller_model.dart';
 import 'package:bookshelf/Features/home/model/cart_model.dart';
 import 'package:bookshelf/Features/home/model/favo_model.dart';
 import 'package:bookshelf/Features/home/model/newarrival_model.dart';
+import 'package:bookshelf/Features/home/model/order_model.dart';
 import 'package:bookshelf/Features/home/model/placeorder_model.dart';
 import 'package:bookshelf/Features/home/model/remove_cart.dart';
+import 'package:bookshelf/Features/home/model/searchmodel.dart';
+import 'package:bookshelf/Features/home/model/singleorder_model.dart';
 import 'package:bookshelf/Features/home/model/slider_model.dart';
 import 'package:bookshelf/Features/home/view/layouts/books.dart';
 import 'package:bookshelf/Features/home/view/layouts/cart.dart';
@@ -37,6 +40,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   var usercity = TextEditingController();
   var useraddress = TextEditingController();
   var userkey = GlobalKey<FormState>();
+  var drawerkey = GlobalKey<ScaffoldState>();
 
   var checkoutusername = TextEditingController();
   var checkoutuseremail = TextEditingController();
@@ -96,46 +100,59 @@ class HomePageCubit extends Cubit<HomePageState> {
     Cart(),
     useraccount()
   ];
-  void onBoardChange(index) {
-    if (index == 3) {
-      isLast = true;
-    } else {
-      isLast = false;
-    }
-  }
 
-  UserProfileModel? userprofilemodel;
-  getuseraccount() async {
-    emit(userloadingstate());
+//home///////////////////////////////////////////////////////////////////////////////////////////////
+  CategoryDetailsModel? categorydetailsmodel;
+
+  BestSellerModel? bestSellerModel;
+
+  CategoriesModel? categoryModel;
+  SliderModel? slidermodel;
+
+  NewArrivalModel? newarrivalmodel;
+  categorydetails(id) async {
+    emit(getcategoryloadingstate());
     await DioHelper.getData(
-      url: Endpoint.profile,
+      url: '${Endpoint.categories}/$id',
       token: await SecureStorage().storage.read(key: 'token'),
     ).then((value) async {
-      print(
-        await SecureStorage().storage.read(key: 'token'),
-      );
-      userprofilemodel = UserProfileModel.fromJson(value.data);
+      categorydetailsmodel = CategoryDetailsModel.fromJson(value.data);
       if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(usersuccessstate());
+        emit(getcategorysuccessstate());
       }
     }).catchError((error) {
-      if (error is DioException && error.response?.statusCode == 401) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 404) {
         final data = error.response?.data;
         final message = data['message'];
         print(message);
       }
-      emit(usererrorstate());
+      emit(getcategoryerrorstate());
     });
   }
 
-  var searchkey = GlobalKey<FormState>();
-  var search = TextEditingController();
+  slider() async {
+    emit(sliderloadingstate());
+    await DioHelper.getData(
+      url: Endpoint.slider,
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) async {
+      slidermodel = SliderModel.fromJson(value.data);
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        emit(slidersuccessstate());
+      }
+    }).catchError((error) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 404) {
+        final data = error.response?.data;
+        final message = data['message'];
+        print(message);
+      }
+      emit(slidererrorstate());
+    });
+  }
 
-  bool isLast = false;
-
-  BestSellerModel? bestSellerModel;
-
-  void bestseller() async {
+  void getbestseller() async {
     emit(bestsellerloadingstate());
     await DioHelper.getData(
             url: Endpoint.bestseller,
@@ -154,29 +171,6 @@ class HomePageCubit extends Cubit<HomePageState> {
       emit(bestsellererrorstate());
     });
   }
-
-  CategoriesModel? categoryModel;
-  getcategory() async {
-    emit(categoryloadingstate());
-    await DioHelper.getData(
-      url: Endpoint.categories,
-      token: await SecureStorage().storage.read(key: 'token'),
-    ).then(
-      (value) {
-        categoryModel = CategoriesModel.fromJson(value.data);
-        emit(categorysuccessstate());
-      },
-    ).catchError((error) {
-      if (error is DioError && error.response?.statusCode == 401) {
-        final data = error.response?.data;
-        final message = data['message'];
-        print(message);
-      }
-      emit(categoryerrorstate());
-    });
-  }
-
-  NewArrivalModel? newarrivalmodel;
 
   getnewarrival() async {
     emit(newarrivalloadingstate());
@@ -202,7 +196,33 @@ class HomePageCubit extends Cubit<HomePageState> {
     });
   }
 
+  getcategory() async {
+    emit(categoryloadingstate());
+    await DioHelper.getData(
+      url: Endpoint.categories,
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then(
+      (value) {
+        categoryModel = CategoriesModel.fromJson(value.data);
+        emit(categorysuccessstate());
+      },
+    ).catchError((error) {
+      if (error is DioError && error.response?.statusCode == 401) {
+        final data = error.response?.data;
+        final message = data['message'];
+        print(message);
+      }
+      emit(categoryerrorstate());
+    });
+  }
+
+//books//////////////////////////////////////////////////////////////////////////////////////////////
+
+  var searchkey = GlobalKey<FormState>();
+  var search = TextEditingController();
   BooksModel? bookmodel;
+  SearchModel? searcmodel;
+
   getbook() async {
     emit(bookloadingstate());
     await DioHelper.getData(
@@ -223,151 +243,56 @@ class HomePageCubit extends Cubit<HomePageState> {
     });
   }
 
-  CategoryDetailsModel? categorydetailsmodel;
-
-  categorydetails(id) async {
-    emit(getcategoryloadingstate());
-    await DioHelper.getData(
-      url: '${Endpoint.categories}/$id',
-      token: await SecureStorage().storage.read(key: 'token'),
-    ).then((value) async {
-      categorydetailsmodel = CategoryDetailsModel.fromJson(value.data);
-      if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(getcategorysuccessstate());
-      }
-    }).catchError((error) {
-      print(error.toString());
-      if (error is DioException && error.response?.statusCode == 404) {
-        final data = error.response?.data;
-        final message = data['message'];
-        print(message);
-      }
-      emit(getcategoryerrorstate());
-    });
-  }
-
-  BooksModel? searchbook;
-  void Searchbook(text) async {
-    emit(SearchDoctorsloadingstate());
+  void Searchbook(String text) async {
+    emit(Searchloadingstate());
     await DioHelper.getData(
             url: Endpoint.search,
-            query: {'name': '$text'},
+            query: {'name': text},
             token: await SecureStorage().storage.read(key: 'token'))
         .then((value) {
-      searchbook = BooksModel.fromJson(value.data);
-      emit(SearchDoctorsSucceessstate());
+      searcmodel = SearchModel.fromJson(value.data);
+      emit(SearchSucceessstate());
     }).catchError((error) {
       if (error is DioException && error.response?.statusCode == 401) {
         final data = error.response?.data;
         final message = data['message'];
         print(message);
       }
-      emit(SearchDoctorsErrorstate());
+      emit(SearchErrorstate());
     });
   }
 
-  SliderModel? slidermodel;
-  slider() async {
-    emit(sliderloadingstate());
-    await DioHelper.getData(
-      url: Endpoint.slider,
-      token: await SecureStorage().storage.read(key: 'token'),
-    ).then((value) async {
-      slidermodel = SliderModel.fromJson(value.data);
-      if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(slidersuccessstate());
-      }
-    }).catchError((error) {
-      print(error.toString());
-      if (error is DioException && error.response?.statusCode == 404) {
-        final data = error.response?.data;
-        final message = data['message'];
-        print(message);
-      }
-      emit(slidererrorstate());
-    });
-  }
-
-  FavoModel? favomodel;
-  getfavourite() async {
-    emit(getfavoloadingstate());
-    await DioHelper.getData(
-      url: Endpoint.favou,
-      token: await SecureStorage().storage.read(key: 'token'),
-    ).then((value) {
-      if (value.data['status'] == 200 || value.data['status'] == 201) {
-        favomodel = FavoModel.fromJson(value.data);
-        emit(getfavosuccessstate());
-      }
-    }).catchError((error) {
-      print(error.toString());
-      if (error is DioException && error.response?.statusCode == 404) {
-        final data = error.response?.data;
-        final message = data['message'];
-        print(message);
-      }
-      emit(getfavoerrorstate());
-    });
-  }
-
-  AddFavoModel? addFavoModel;
-  addToFav({required int id}) async {
-    emit(addtofavoloadingstate());
-    await DioHelper.postData(
-      url: Endpoint.addfav,
-      data: {'product_id': id},
-      token: await SecureStorage().storage.read(key: 'token'),
-    ).then((value) async {
-      addFavoModel = AddFavoModel.fromJson(value.data);
-      if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(addtofavosuccessstate());
-        getfavourite();
-      }
-    }).catchError((error) {
-      print(error.toString());
-      if (error is DioException && error.response?.statusCode == 422) {
-        final data = error.response?.data;
-        final message = data['errors'];
-        print(message);
-      }
-      emit(addtofavoerrorstate());
-    });
-  }
-
-  removeFav({required int id}) async {
-    emit(removefavoloadingstate());
-    await DioHelper.postData(
-      url: Endpoint.removefav,
-      data: {'product_id': id},
-      token: await SecureStorage().storage.read(key: 'token'),
-    ).then((value) async {
-      addFavoModel = AddFavoModel.fromJson(value.data);
-      if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(removefavosuccessstate());
-        getfavourite();
-      }
-    }).catchError((error) {
-      print(error.toString());
-      if (error is DioException && error.response?.statusCode == 422) {
-        final data = error.response?.data;
-        final message = data['errors'];
-        print(message);
-      }
-      emit(removefavoerrorstate());
-    });
-  }
+//cart/////////////////////////////////////////////////////////////////////////////////////////
 
   CartModel? cartmodel;
+  CityModel? citymodel;
 
-  getcart() async {
-    emit(cartloadingstate());
-    await DioHelper.getData(
-      url: Endpoint.cart,
-      token: await SecureStorage().storage.read(key: 'token'),
+  int cityindex = 0;
+  void filter(value) {
+    cityindex = value;
+    emit(filterstate());
+  }
+
+  RemoveCartModel? removecartmodel;
+
+  PlaceOrderModel? placemodel;
+  AddCartModel? addcartmodel;
+
+  placeorder() async {
+    emit(placeorderloadingstate());
+    await DioHelper.postData(
+      url: Endpoint.placeorder,
+      data: {
+        'governorate_id': cityindex,
+        'phone': checkoutuserphone.text,
+        'name': checkoutusername.text,
+        'email': checkoutuseremail.text,
+        'address': checkoutuseraddress.text
+      },
     ).then((value) async {
-      cartmodel = CartModel.fromJson(value.data);
+      placemodel = PlaceOrderModel.fromJson(value.data);
       if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(cartsuccessstate());
+        emit(placeorderSucceessstate());
       }
     }).catchError((error) {
       print(error.toString());
@@ -376,31 +301,7 @@ class HomePageCubit extends Cubit<HomePageState> {
         final message = data['message'];
         print(message);
       }
-      emit(carterrorstate());
-    });
-  }
-
-  AddCartModel? addcartmodel;
-  addtocart({required int id}) async {
-    emit(addtocartloadingstate());
-    await DioHelper.postData(
-      url: Endpoint.addcart,
-      data: {'product_id': id},
-      token: await SecureStorage().storage.read(key: 'token'),
-    ).then((value) async {
-      addcartmodel = AddCartModel.fromJson(value.data);
-      if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(addtocartsuccessstate());
-        getcart();
-      }
-    }).catchError((error) {
-      print(error.toString());
-      if (error is DioException && error.response?.statusCode == 422) {
-        final data = error.response?.data;
-        final message = data['errors'];
-        print(message);
-      }
-      emit(addtocarterrorstate());
+      emit(placeorderErrorstate());
     });
   }
 
@@ -427,7 +328,48 @@ class HomePageCubit extends Cubit<HomePageState> {
     });
   }
 
-  RemoveCartModel? removecartmodel;
+  getcart() async {
+    emit(cartloadingstate());
+    await DioHelper.getData(
+      url: Endpoint.cart,
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) async {
+      cartmodel = CartModel.fromJson(value.data);
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        emit(cartsuccessstate());
+      }
+    }).catchError((error) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 404) {
+        final data = error.response?.data;
+        final message = data['message'];
+        print(message);
+      }
+      emit(carterrorstate());
+    });
+  }
+
+  getcity() async {
+    emit(cityloadingstate());
+    await DioHelper.getData(
+      url: Endpoint.city,
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) async {
+      citymodel = CityModel.fromJson(value.data);
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        emit(citysuccessstate());
+      }
+    }).catchError((error) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 404) {
+        final data = error.response?.data;
+        final message = data['message'];
+        print(message);
+      }
+      emit(cityerrorstate());
+    });
+  }
+
   removecart({required int id}) async {
     emit(removecartloadingstate());
     await DioHelper.postData(
@@ -452,50 +394,71 @@ class HomePageCubit extends Cubit<HomePageState> {
     });
   }
 
-  CityModel? citymodel;
-  getcity() async {
-    emit(cityloadingstate());
-    await DioHelper.getData(
-      url: Endpoint.city,
+  addtocart({required int id}) async {
+    emit(addtocartloadingstate());
+    await DioHelper.postData(
+      url: Endpoint.addcart,
+      data: {'product_id': id},
       token: await SecureStorage().storage.read(key: 'token'),
     ).then((value) async {
-      citymodel = CityModel.fromJson(value.data);
+      addcartmodel = AddCartModel.fromJson(value.data);
       if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(citysuccessstate());
+        emit(addtocartsuccessstate());
+        getcart();
       }
     }).catchError((error) {
       print(error.toString());
-      if (error is DioException && error.response?.statusCode == 404) {
+      if (error is DioException && error.response?.statusCode == 422) {
         final data = error.response?.data;
-        final message = data['message'];
+        final message = data['errors'];
         print(message);
       }
-      emit(cityerrorstate());
+      emit(addtocarterrorstate());
     });
   }
 
-  int cityindex = 0;
-  void filter(value) {
-    cityindex = value;
-    emit(filterstate());
+//fav/////////////////////////////////////////////////////////////////////////////////////////
+  finalprice(String price, String discount) {
+    double finalPrice = double.parse(price) -
+        (double.parse(price) * (double.parse(discount) / 100));
+    return finalPrice.round();
   }
 
-  PlaceOrderModel? placemodel;
-  placeorder() async {
-    emit(placeorderloadingstate());
+  AddFavoModel? addFavoModel;
+
+  FavoModel? favomodel;
+  removeFav({required int id}) async {
+    emit(removefavoloadingstate());
     await DioHelper.postData(
-      url: Endpoint.placeorder,
-      data: {
-        'governorate_id': 2,
-        'phone': checkoutuserphone.text,
-        'name': checkoutusername.text,
-        'email': checkoutuseremail.text,
-        'address': checkoutuseraddress.text
-      },
+      url: Endpoint.removefav,
+      data: {'product_id': id},
+      token: await SecureStorage().storage.read(key: 'token'),
     ).then((value) async {
-      placemodel = PlaceOrderModel.fromJson(value.data);
+      addFavoModel = AddFavoModel.fromJson(value.data);
       if (value.data['status'] == 200 || value.data['status'] == 201) {
-        emit(placeorderSucceessstate());
+        emit(removefavosuccessstate());
+        getfavourite();
+      }
+    }).catchError((error) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 422) {
+        final data = error.response?.data;
+        final message = data['errors'];
+        print(message);
+      }
+      emit(removefavoerrorstate());
+    });
+  }
+
+  getfavourite() async {
+    emit(getfavoloadingstate());
+    await DioHelper.getData(
+      url: Endpoint.favou,
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) {
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        favomodel = FavoModel.fromJson(value.data);
+        emit(getfavosuccessstate());
       }
     }).catchError((error) {
       print(error.toString());
@@ -504,7 +467,55 @@ class HomePageCubit extends Cubit<HomePageState> {
         final message = data['message'];
         print(message);
       }
-      emit(placeorderErrorstate());
+      emit(getfavoerrorstate());
+    });
+  }
+
+  addToFav({required int id}) async {
+    emit(addtofavoloadingstate());
+    await DioHelper.postData(
+      url: Endpoint.addfav,
+      data: {'product_id': id},
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) async {
+      addFavoModel = AddFavoModel.fromJson(value.data);
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        emit(addtofavosuccessstate());
+        getfavourite();
+      }
+    }).catchError((error) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 422) {
+        final data = error.response?.data;
+        final message = data['errors'];
+        print(message);
+      }
+      emit(addtofavoerrorstate());
+    });
+  }
+
+//account//////////////////////////////////////////////////////////////////////////////////////
+  UserProfileModel? userprofilemodel;
+  getuseraccount() async {
+    emit(userloadingstate());
+    await DioHelper.getData(
+      url: Endpoint.profile,
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) async {
+      print(
+        await SecureStorage().storage.read(key: 'token'),
+      );
+      userprofilemodel = UserProfileModel.fromJson(value.data);
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        emit(usersuccessstate());
+      }
+    }).catchError((error) {
+      if (error is DioException && error.response?.statusCode == 401) {
+        final data = error.response?.data;
+        final message = data['message'];
+        print(message);
+      }
+      emit(usererrorstate());
     });
   }
 
@@ -531,6 +542,54 @@ class HomePageCubit extends Cubit<HomePageState> {
         print(message);
       }
       emit(updateaccountErrorstate());
+    });
+  }
+
+///////////////////////////////////////////////////////////////////////////////////
+
+  ///ToDo
+
+  OrderHistoryModel? ordermodel;
+  getorderhistory() async {
+    emit(getorderloadingstate());
+    await DioHelper.getData(
+      url: Endpoint.orderhistory,
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) async {
+      ordermodel = OrderHistoryModel.fromJson(value.data);
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        emit(getorderSucceessstate());
+      }
+    }).catchError((error) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 404) {
+        final data = error.response?.data;
+        final message = data['message'];
+        print(message);
+      }
+      emit(getorderErrorstate());
+    });
+  }
+
+  SingleOrderModel? singleordermodel;
+  getsingleorderhistory(id) async {
+    emit(getsingleorderloadingstate());
+    await DioHelper.getData(
+      url: '${Endpoint.orderhistory}/$id',
+      token: await SecureStorage().storage.read(key: 'token'),
+    ).then((value) async {
+      singleordermodel = SingleOrderModel.fromJson(value.data);
+      if (value.data['status'] == 200 || value.data['status'] == 201) {
+        emit(getsingleorderSucceessstate());
+      }
+    }).catchError((error) {
+      print(error.toString());
+      if (error is DioException && error.response?.statusCode == 404) {
+        final data = error.response?.data;
+        final message = data['message'];
+        print(message);
+      }
+      emit(getsingleorderErrorstate());
     });
   }
 }

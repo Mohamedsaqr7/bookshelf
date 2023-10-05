@@ -44,7 +44,7 @@ class Products {
   String? price;
   int? bestSeller;
   int? discount;
-  num? priceAfterDiscount;
+  dynamic priceAfterDiscount;
   String? image;
 
   Products(

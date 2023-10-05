@@ -55,7 +55,7 @@ class CartItems {
   String? itemProductImage;
   String? itemProductPrice;
   int? itemProductDiscount;
-  num? itemProductPriceAfterDiscount;
+  dynamic itemProductPriceAfterDiscount;
   int? itemProductStock;
   int? itemQuantity;
   num? itemTotal;
